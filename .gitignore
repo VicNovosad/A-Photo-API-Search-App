@@ -9,3 +9,4 @@ package.json
 tailwind.config.js
 .vscode
 data.json
+config.js
