@@ -13,17 +13,22 @@
     <header class="flex flex-col w-full min-h-[500px] py-2 px-6 bg-gray-600 bg-center bg-no-repeat bg-cover">
         <div class="top-menu-container flex justify-between items-center w-full">
             <div id="left-block" class="flex">
-                <a href="#" id="logo" class="logo flex flex-col justify-center">
-                    <div class="name-line flex items-center w-[120px] h-16 p-1">
-                        <svg viewBox="0 0 130 50">
+                <a href="#" id="logo" class="logo flex justify-center items-center">
+                    <div class="name-line flex items-center w-14 h-14 p-1">
+                        <svg viewBox="0 0 50 50">
                             <use xlink:href="lib.svg#pexels-logo"></use>
+                        </svg>
+                    </div>
+                    <div class="name-line hidden items-center ml-3 w-[74px] h-16 p-1 2md:flex">
+                        <svg viewBox="0 0 64 17">
+                            <use xlink:href="lib.svg#pexels-title"></use>
                         </svg>
                     </div>
                 </a>
             </div>
             <nav id="right-block" class="flex items-center">
                 <!-- Explore dropdown -->
-                <div class="explore-menu-item flex items-center more-btn dropdown-btn group relative mx-4 cursor-pointer" href="#">
+                <div class="explore-menu-item items-center more-btn dropdown-btn group relative mx-4 cursor-pointer hidden 2md:flex" href="#">
                     <h2 class="text-white font-medium text-lg group-hover:opacity-50 transition duration-300">
                         Explore
                     </h2>
@@ -56,14 +61,14 @@
                         </div>
                     </div>
                 </div>
-                <h2 class="text-white font-medium text-lg cursor-pointer hover:opacity-50">
+                <h2 class="text-white font-medium text-lg cursor-pointer hover:opacity-50 hidden 2md:flex">
                     License
                 </h2>
-                <h2 class="text-white font-medium text-lg ml-6 cursor-pointer hover:opacity-50">
+                <h2 class="text-white font-medium text-lg ml-6 cursor-pointer hover:opacity-50 hidden 2md:flex">
                     Upload
                 </h2>
                 <!-- More dropdown -->
-                <div class="more-btn dropdown-btn group relative cursor-pointer" href="#">
+                <div class="more-btn dropdown-btn group relative cursor-pointer hidden 2md:flex" href="#">
                     <svg class="w-10 h-10 p-2 mx-4 translate-y-0.5 text-white hover:opacity-50" viewBox="0 0 24 24" fill="#fff"><use xlink:href="lib.svg#horizontal-dots"></use></svg>
                     <div class="dropdown hidden absolute top-[50px] right-0 z-10 mt-2 w-[240px] origin-top-right rounded-2xl bg-white shadow-lg transition duration-300 ring-1 ring-black ring-opacity-5 focus:outline-none group-hover:block" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
                         <!-- equilateral-top-pointer -->
@@ -118,32 +123,38 @@
                         </div>
                     </div>
                 </div>
-                <a href="#" id="sign-in-button" class="flex justify-center items-center w-20 h-11
+                <a href="#" id="sign-in-button" class="flex justify-center items-center w-20 h-11 mr-2
                     bg-white rounded-lg hover:opacity-75 font-medium text-lg">
                     Join
                 </a>
+                <svg class="flex justify-center items-center w-11 h-11 p-2
+                    text-white rounded-lg hover:bg-gray-200/25 cursor-pointer" viewBox="0 0 24 24" fill="#666">
+                    <use xlink:href="lib.svg#mobile-menu"></use>
+                </svg>
             </nav>
         </div>
-        <div id="search-container" class="flex flex-col px-[20%] flex-1 items-center justify-center">
-            <h1 class="text-white font-medium text-4xl mb-8">
-                The best free stock photos, royalty free images & videos shared by creators.
-            </h1>
-            <div id="search-bar" class="flex w-full h-12 border rounded-lg overflow-hidden">
-                <form id="search-form" class="flex w-full relative group" action="" >
-                    <input id="search-input" class="flex w-full text-xl font-medium text-gray-600 pl-6 pt-[2px] border-r-0
-                    focus:shadow-inner placeholder:text-slate-500 placeholder:text-xl placeholder:font-medium focus:outline-none focus:border-gray-300 focus:ring-gray-200 focus:ring-1 focus:border-r-[1px] sm:text-base
-                    " placeholder="Search for free photos" type="text" name="search">
-                    <button type="submit" value=" " id="search-button" class="flex relative group w-14 h-12 group-hover:bg-[#f0f0f0] p-1.5 border-l-transparent bg-gray-50">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" class="absolute top-[12px] right-[12px] w-6 h-6 group-hover:bg-[#f0f0f0]">
-                            <use class="text-gray-600" xlink:href="lib.svg#search-icon"></use>
-                        </svg>
-                        <h1 class="hover-message opacity-0 absolute right-0 translate-x-[15%] bottom-[-50px] p-2 bg-gray-500 rounded-[4px] text-white text-sm group-hover:opacity-100 duration-1000 ease-in whitespace-nowrap">
-                            Search
-                        </h1>
-                    </button>
-                </form>
+        <div id="search-container" class="flex flex-col px-4 w-full flex-1 items-center justify-center">
+            <div class="wrap flex flex-col max-w-[630px]">
+                <h1 class="text-white font-medium text-4xl mb-8">
+                    The best free stock photos, royalty free images & videos shared by creators.
+                </h1>
+                <div id="search-bar" class="flex w-full h-12 border rounded-lg overflow-hidden">
+                    <form id="search-form" class="flex w-full relative group" action="" >
+                        <input id="search-input" class="flex w-full text-xl font-medium text-gray-600 pl-6 pt-[2px] border-r-0
+                        focus:shadow-inner placeholder:text-slate-500 placeholder:text-xl placeholder:font-medium focus:outline-none focus:border-gray-300 focus:ring-gray-200 focus:ring-1 focus:border-r-[1px] sm:text-base
+                        " placeholder="Search for free photos" type="text" name="search">
+                        <button type="submit" value=" " id="search-button" class="flex relative group w-14 h-12 group-hover:bg-[#f0f0f0] p-1.5 border-l-transparent bg-gray-50">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" class="absolute top-[12px] right-[12px] w-6 h-6 group-hover:bg-[#f0f0f0]">
+                                <use class="text-gray-600" xlink:href="lib.svg#search-icon"></use>
+                            </svg>
+                            <h1 class="hover-message opacity-0 absolute right-0 translate-x-[15%] bottom-[-50px] p-2 bg-gray-500 rounded-[4px] text-white text-sm group-hover:opacity-100 duration-1000 ease-in whitespace-nowrap">
+                                Search
+                            </h1>
+                        </button>
+                    </form>
+                </div>
             </div>
-            <nav id="trending-bar" class="flex items-center w-full mt-8 text-lg font-medium text-white">
+            <nav id="trending-bar" class="flex items-center w-full mt-8 text-lg font-medium text-white overflow-hidden">
                 <span class="text-gray-300 mr-4">
                     Trending:
                 </span>
@@ -194,8 +205,8 @@
             <ul class="flex justify-center items-center space-x-8 z-10">
                 <li class="active">Home</li>
                 <li>Videos</li>
-                <li>Leaderboard</li>
-                <li>Challenges</li>
+                <li class="hidden 2md:flex">Leaderboard</li>
+                <li class="hidden 2md:flex">Challenges</li>
             </ul>
             <div id="selection" class="absolute h-[50px] bg-black top-0 left-1/2 active text-black transition-all ease-in-out duration-300"> </div>
         </nav>
@@ -224,7 +235,38 @@
         </div>
         <div id="content-container" class="w-full columns-2 2md:columns-3 gap-7
                 mt-8">
-            <div class="photo">
+
+                <div class="video">
+                    <a target="_blank" href="https://images.pexels.com/photos/15176533/pexels-photo-15176533.jpeg">
+                        <img src="https://images.pexels.com/videos/7258427/apple-beige-bright-light-brown-7258427.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load" alt="">
+                        <video preload="none" loop="" class="VideoTag_video__i0yT6" playsinline="">
+                            <source src="https://player.vimeo.com/external/528975212.sd.mp4?s=ee194a10a7b57e6d3fc71a65d4ffd611a851cfbe&amp;profile_id=165&amp;oauth2_token_id=57447761" type="video/mp4">
+                        </video>
+                    </a>
+                    <div class="icon favorite">
+                        <svg class="" viewBox="0 0 24 24">
+                            <use xlink:href="lib.svg#favorite-icon"></use>
+                        </svg>
+                    </div>
+                    <div class="icon collection">
+                        <svg viewBox="0 0 24 24">
+                            <use xlink:href="lib.svg#collection-icon"></use>
+                        </svg>
+                    </div>
+                    <div class="author_info-wrap">
+                        <a class="author_name items-center" href="https://www.pexels.com/@Photographer">
+                        <!-- <div class="author_img"></div> -->
+                        Photographer</a>
+                    </div>
+                    <a href="{data:application/xml;charset=utf-8,your code here}" download="filename.html">
+                        <div class="icon file_download">
+                            <svg viewBox="0 0 24 24">
+                                <use xlink:href="lib.svg#file_download-icon"></use>
+                            </svg>
+                        </div>
+                    </a>
+                </div>
+            <!-- <div class="photo">
                 <a target="_blank" href="https://images.pexels.com/photos/15176533/pexels-photo-15176533.jpeg">
                     <img src="https://images.pexels.com/photos/15176533/pexels-photo-15176533.jpeg?cs=srgb&dl=pexels-anait-film-12276028.jpg&fm=jpg" alt="">
                 </a>
@@ -240,7 +282,6 @@
                 </div>
                 <div class="author_info-wrap">
                     <a class="author_name items-center" href="https://www.pexels.com/@Photographer">
-                    <!-- <div class="author_img"></div> -->
                     Photographer</a>
                 </div>
                 <a href="{data:application/xml;charset=utf-8,your code here}" download="filename.html">
@@ -250,7 +291,8 @@
                         </svg>
                     </div>
                 </a>
-            </div>
+            </div> -->
+            
             <!-- <div class="photo">
 
             </div>
