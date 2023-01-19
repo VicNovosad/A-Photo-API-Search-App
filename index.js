@@ -5,17 +5,16 @@ const Search = {
     photo(UrlSearchValue) {
         const self = this;
         
-        console.log('step2');
         if (UrlSearchValue) {
             $(`#search-input`).val(UrlSearchValue);
             Url.clean();
         }
-        console.log('step3');
+        console.log('step1');
         
         $(document).ready(function () {
-            console.log('step4');
+            console.log('step2');
             $(`#search-form`).submit(function(e){
-                console.log('step5');
+                console.log('step3');
                 e.preventDefault(); //Prevent from submitting a form when clicking on a "Submit" button
                 self.clearContentContainer();
                 const $searchValue = $(`#search-input`).val()
