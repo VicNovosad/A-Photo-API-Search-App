@@ -1,31 +1,105 @@
 // console.log(PEXEL_API_KEY);
 
+let page = 1;
+let pagesLoaded = 0;
+let lastRun = Date.now();
+// let message = true;
+let pageNavigator = "Home";
+let isMobile = false;
+let mobileRunFlag = false;
+let desktopRunFlag = false;
+const thirdContentColumn = $("#content-container .content-column")[2];
+const secondContentColumn = $("#content-container .content-column")[1];
+const firstContentColumn = $("#content-container .content-column")[0];
 
 const Search = {
     trends : ["mountains", "city", "country", "iceberg", "sky", "flowers","travel","house","business",
                         "winter","water","beach","nature","coffee","dog","texture",
                         "car","technology","landscape","money","office","forest","space","dark"],
-    photo(UrlSearchValue) {
+    // content(UrlSearchValue,type) {
+    //     const self = this;
+    //     if (UrlSearchValue) {
+    //         $(`#search-input`).val(UrlSearchValue);
+    //         Url.clean();
+    //         self.clearContentContainer();
+    //         self.search(`https://api.pexels.com/v1/search/?page=1&per_page=18&query=${UrlSearchValue}`);
+    //     }
+    //     $(document).ready(function () {
+    //         $(`#search-form`).submit(function(e){
+    //             console.log('step3');
+    //             e.preventDefault(); //Prevent from submitting a form when clicking on a "Submit" button
+    //             self.clearContentContainer();
+    //             const $searchValue = $(`#search-input`).val()
+    //             Url.update(`search=${$searchValue}`);
+    //             self.search(`https://api.pexels.com/v1/search/?page=1&per_page=18&query=${$searchValue}`);
+    //         });
+    //     });
+    //     return this;
+    // },
+    load(urlQuery) {
         const self = this;
-        
-        if (UrlSearchValue) {
-            $(`#search-input`).val(UrlSearchValue);
+        if (urlQuery) {
+            $(`#search-input`).val(urlQuery);
             Url.clean();
             self.clearContentContainer();
-            self.search(`https://api.pexels.com/v1/search/?page=1&per_page=18&query=${UrlSearchValue}`);
+            if (pageNavigator === "Videos"){
+                // self.search( Video API query)
+                console.log('Video API query');
+            } else {
+                self.search('Photos', urlQuery);
+            }
         }
         $(document).ready(function () {
             $(`#search-form`).submit(function(e){
-                console.log('step3');
                 e.preventDefault(); //Prevent from submitting a form when clicking on a "Submit" button
                 self.clearContentContainer();
-                const $searchValue = $(`#search-input`).val()
-                Url.update(`search=${$searchValue}`);
-                self.search(`https://api.pexels.com/v1/search/?page=1&per_page=18&query=${$searchValue}`);
+                urlQuery = $(`#search-input`).val()
+                Url.update(`search=${urlQuery}`);
+                console.log(`search form value: ${urlQuery}`);
+                if (pageNavigator === "Videos"){
+                    console.log('Video API query');
+                    self.search('Videos', urlQuery);
+                } else {
+                    // self.search(`https://api.pexels.com/v1/search/?page=1&per_page=18&query=${$searchValue}`);
+                    self.search('Photos', urlQuery);
+                }
             });
         });
         return this;
     },
+    // loadNextPage(type, urlQuery) {
+    //     // if (Date.now() - lastRun < 1500) {
+    //     //     if (message) {
+    //     //         console.log("Please wait before running the function again.");
+    //     //         message = false;
+    //     //     }
+    //     //     return;
+    //     // }
+    //     // lastRun = Date.now();
+    //     // message = true;
+    //     // console.log(`run loading page number ${page}` );
+        
+    //     if (type == 'trending'){
+    //         // Search.getRandomTrending();
+    //     } else if (type === 'Photos') {
+    //         // Search.load(); 
+    //         // this.search('Photos', urlQuery);
+    //     } else if (type === 'Videos') {
+
+    //     } else {
+    //         console.log('Unknown type: ' + type);
+    //     }
+    // },
+    // getRandomTrending(){
+    //     if (pageNavigator === "Videos"){
+    //         // this.search(` Video API query`);
+    //         console.log('Video API query');
+    //     } else {
+    //         this.search('trending');
+    //         // this.search(`https://api.pexels.com/v1/curated?page=${page}&per_page=18`, 'trending');
+    //         // self.search(urlQuery, 'trending');
+    //     }
+    // },
     getHeaderPhoto(){
         const self = this;
         const searchURL = `https://api.pexels.com/v1/search/?page=${self.randomNumber(1,3800)}&per_page=1&orientation=landscape&query=${this.trends[this.randomNumber(0,this.trends.length-1)]}`;
@@ -36,17 +110,15 @@ const Search = {
             headers: {'Authorization': PEXEL_API_KEY},
             success: function(data){
                 // console.log(JSON.stringify(data));
-                $('header').css('background-image', `url(${data.photos[0].src.original})`);
+                $('header').css('background-image', `url(${data.photos[0].src.original}?auto=compress&cs=tinysrgb&fit=crop&h=500&w=1400&dpr=1)`);
                 $('header .author-name-wrap a').text(data.photos[0].photographer);
                 $('header .author-name-wrap a').attr("href", data.photos[0].photographer_url);
             }
         });
     },
-    getRandomTrendingPhotos(){
-        this.search(`https://api.pexels.com/v1/curated?page=1&per_page=18`);
-    },
     clearContentContainer(){
-        $(`#content-container`).html('');
+        $(`#content-container .content-column`).html('');
+        page = 1;
     },
     randomNumber(min, max){
         min = Math.ceil(min);
@@ -59,7 +131,30 @@ const Search = {
         if (n >= 1e3) return +(n / 1e3).toFixed(1) + "K";
         return n;
     },
-    search(searchURL){
+    search(type, urlQuery){
+        console.log(`loading page number: ${page}`);
+        let searchURL;
+        if (type === 'Photos') {
+            console.log('type: ' + type);
+            searchURL = `https://api.pexels.com/v1/search/?page=${page++}&per_page=18&query=${urlQuery}`;
+        } else if (type === 'Videos') {
+            console.log('type: ' + type);
+            // Video query
+            // searchURL = `https://api.pexels.com/v1/search/?page=1&per_page=18&query=${urlQuery}`;
+        } else if (type === 'trending') {
+            if (pageNavigator === "Videos") {
+                console.log('type: ' + type + ' pageNavigator: ' + pageNavigator);
+                // Video query
+                // searchURL = `https://api.pexels.com/v1/curated?page=${page++}&per_page=18`;
+            } else {
+                console.log('type: ' + type);
+                searchURL = `https://api.pexels.com/v1/curated?page=${page++}&per_page=18`;
+            }
+        } else {
+            console.log('unknown type: ' + type);
+        } 
+        // ++page;
+        console.log(searchURL);
         // searchURL =  `https://api.pexels.com/v1/photos/102775`; // search by photo ID
         const self = this;
         $.ajax({
@@ -69,9 +164,37 @@ const Search = {
             headers: {'Authorization': PEXEL_API_KEY},
             success: function(data){
                 // console.log(data);
-                data.photos.forEach(function(photo) {
-                    self.createPhoto(photo).appendTo($(`#content-container`));
+                // console.log(data.photos.length);
+                const photos = data.photos
+                photos.forEach(function(photo, index) {
+                    const $photo = self.createPhoto(photo)
+                        .css('background-color', `${photo.avg_color}`);
+                    if (index > (data.photos.length / 3 * 2 - 1).toFixed()) {
+                        if (isMobile) {
+                            if (index > (data.photos.length / 3 * 2.5 - 1).toFixed()) {
+                                $photo.addClass('col-3').appendTo($(secondContentColumn))
+                                    .css('background-color', `red`);
+                            } else {
+                                $photo.addClass('col-3').appendTo($(firstContentColumn))
+                                    .css('background-color', `red`);
+                            }
+                        } else {
+                            $photo.addClass('col-3').appendTo($(thirdContentColumn))
+                            .css('background-color', `red`);
+                        }
+                    } else if (index > (data.photos.length / 3 - 1).toFixed()) {
+                        $photo.appendTo($(secondContentColumn));
+                    } else {
+                        if (index > (data.photos.length / 3 - 2).toFixed()) {
+                            $photo.addClass('observing').css('background-color','blue');
+                            
+                            //add observer to the last photo in the column
+                            self.observeMediaContainer($photo, type, urlQuery);
+                        }
+                        $photo.appendTo($(firstContentColumn));
+                    }
                 });
+                pagesLoaded++;
             }
         });
     },
@@ -88,9 +211,9 @@ const Search = {
     },
     createPhoto(photo){
         const $currentPhoto = $(`
-                <div class="photo">
+                <div class="photo media">
                     <a target="_blank" href="${photo.src.original}">
-                        <img src="${photo.src.original}" alt="${photo.photographer}">
+                        <img src="${photo.src.original}" alt="${photo.photographer}" loading="lazy">
                     </a>
                     <div class="icon favorite">
                         <svg class="" viewBox="0 0 24 24">
@@ -117,7 +240,67 @@ const Search = {
                 </div>
                 `);
         return $currentPhoto;
-    }
+    },
+    createVideo(video){
+        const $currentVideo = $(`
+                <div class="photo media">
+                    <a target="_blank" href="${photo.src.original}">
+                        <img src="${photo.src.original}" alt="${photo.photographer}" loading="lazy">
+                        <video preload="none" loop="" class="VideoTag_video__i0yT6" playsinline="">
+                            <source src="https://player.vimeo.com/external/528975212.sd.mp4?s=ee194a10a7b57e6d3fc71a65d4ffd611a851cfbe&amp;profile_id=165&amp;oauth2_token_id=57447761" type="video/mp4">
+                        </video>
+                    </a>
+                    <div class="icon favorite">
+                        <svg class="" viewBox="0 0 24 24">
+                            <use xlink:href="lib.svg#favorite-icon"></use>
+                        </svg>
+                    </div>
+                    <div class="icon collection">
+                        <svg viewBox="0 0 24 24">
+                            <use xlink:href="lib.svg#collection-icon"></use>
+                        </svg>
+                    </div>
+                    <div class="author_info-wrap">
+                        <a target="_blank" class="author_name flex items-center" href="${photo.photographer_url}">
+                        <!-- <div class="author_img"></div> -->
+                        ${photo.photographer}</a>
+                    </div>
+                    <a download="" title="Download" href="${photo.src.original}?cs=srgb&amp;dl=pexels-anait-film-12276028.jpg&amp;fm=jpg">
+                        <div class="icon file_download">
+                            <svg viewBox="0 0 24 24">
+                                <use xlink:href="lib.svg#file_download-icon"></use>
+                            </svg>
+                        </div>
+                    </a>
+                </div>
+                `);
+        return $currentPhoto;
+    },
+    observeMediaContainer($trigger, type, urlQuery){
+        // const self = this;
+        // var trigger = document.querySelector("#MainContent section:first-child");
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                // entry.target.classList.toggle('show', entry.isIntersecting);
+                console.log('media on page: ' + entry.isIntersecting);
+                if (entry.isIntersecting) {
+                    if (type === 'trending' || type === 'Photos' || type === 'Videos') {
+                        console.log(`${type} +++`);
+                        this.search(type, urlQuery);
+                        // this.loadNextPage(type, urlQuery);
+                    } else {
+                        console.log('unknown type: ' + type);
+                    }
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, 
+        {
+            threshold: 1,
+        });
+        observer.observe($trigger[0]);
+    },
 }
 
 const Url = {
@@ -144,28 +327,43 @@ const Url = {
     update(param){
         history.replaceState(null, null, "?" + param); //refresh URLSearchParams
         return this;
-    }
+    },
+};
+
+function playVideoOnHover(){
+    $(document).ready(function(){
+        $(".video").hover(function() {
+                $('video', this)[0].play();
+            }, function() {
+                $('video', this)[0].pause();
+            }
+        );
+    });
 };
 
 function Init(){
     const self = this;
-    // setActiveSelection($("#pages-nav li:first-child").addClass("active"));
     
+    //set random trending words
     const randomIndices = Search.getRandomIndexes();
     $(`#trending-bar li`).each(function(index, element) {
         $(this).find('a').attr("href", `/?search=${Search.trends[randomIndices[index]]}`);
         $(this).find('span.trend').text(`${Search.trends[randomIndices[index]]}`);
     });
 
+    //add page navigation
     $(`#pages-nav li`).click(function(e){
         $(`#pages-nav li`).removeClass('active');
         $(this).addClass('active');
+        pageNavigator = $(this).text();
+        console.log(pageNavigator);
         // const position = $(this).position();
         // const activeWidth = ($(this).width() + 40);
         // $('#selection').css({left: position.left + 'px', width: activeWidth + 'px'});
     });
     
-    $(`#content-container-header`).click(function(e){
+    //add "Trending/New" dropdown button(menu)
+    $(`#content-container-header button`).click(function(e){
         $('#sort-by-dropdown-menu').toggleClass('hidden');
     });
     
@@ -176,27 +374,83 @@ function Init(){
         $('#sort-by-btn h2').text(sortBy);
     });
 
+    //looking for scroll-down till the 2/3 of the page and load more photos
+    // $(document).ready(function(){
+    //     $(document).scroll(function(){
+    //         const triggerPosition = ($("#content-container")[0].getBoundingClientRect().height / 3 * 2).toFixed();
+    //         const currentScrollPosition = window.pageYOffset;
+    //         if (currentScrollPosition > triggerPosition) {
+    //             // console.log(`triggerPosition ${triggerPosition}`);
+    //             load()
+    //         } else {
+    //             // console.log(`waiting for scroll down till 2/3 of the current scroll position`);
+    //         }
+    //     });
+    // });
+
     //Video play on hover
-    $(document).ready(function(){
-        $(".video").hover(function() {
-                console.log(this);
-                $('video', this)[0].play();
-                // $(this).find("video")[0].play();
-            }, 
-            function() {
-                $('video', this)[0].pause();
-                // $(this).find("video")[0].pause();
-                // $(this).find("video")[0].currentTime = 0;
-            }
-        );
-    });
+    playVideoOnHover();
     
+    //Load random Header Photo
     Search.getHeaderPhoto();
+
+    // Check searchURL and load Images 
     if (Url.load()){
-        Search.photo(Url.load());
+        console.log(pageNavigator);
+        Search.load(Url.load());
+        // if (pageNavigator === "Videos") {
+        //     console.log('searching videos')
+        // } else {
+        //     console.log('searching photos')
+        //     Search.load(Url.load());
+        // }
     } else {
-        Search.getRandomTrendingPhotos();
+        Search.search('trending');
+        // Search.getRandomTrending();
     }
+    
+    //Observe window width and if it less than 900px move photos
+    //from 3rd col to 1-st and 2-nd and back if more than 900px
+    const columnObserver = new ResizeObserver((entries) => {
+        isMobile = entries[0].contentRect.width < 900;
+        if (pagesLoaded > 0){
+            if (isMobile) {
+                if (mobileRunFlag) {
+                    return;
+                }
+                // $(thirdContentColumn).css('border', '1px solid red');
+                console.log("smaller")
+                $(thirdContentColumn).children('.media').each(function(index){
+                    if (index < $(thirdContentColumn).children('.media').length / 2) {
+                        $(this).appendTo(firstContentColumn);
+                    } else {
+                        $(this).appendTo(secondContentColumn);
+                    }
+                });
+                if ($(thirdContentColumn).children('.media').length === 0){
+                    // $(thirdContentColumn).hide();
+                    $("#content-container").css('grid-template-columns','1fr 1fr')
+                }
+                // console.log($(firstContentColumn).children('.media').length)
+                // console.log($(secondContentColumn).children('.media').length)
+                mobileRunFlag = true;
+                desktopRunFlag = false;
+            } else {
+                if (desktopRunFlag) {
+                    return;
+                }
+                console.log("bigger")
+                $(firstContentColumn).children('.col-3').appendTo(thirdContentColumn);
+                $(secondContentColumn).children('.col-3').appendTo(thirdContentColumn);
+                $("#content-container").css('grid-template-columns','1fr 1fr 1fr');
+                // console.log($(firstContentColumn).children('.media').length)
+                // console.log($(secondContentColumn).children('.media').length)
+                desktopRunFlag = true;
+                mobileRunFlag = false;
+            }
+        }
+    });
+    columnObserver.observe(document.body);
 };
 
 window.onload = Init;

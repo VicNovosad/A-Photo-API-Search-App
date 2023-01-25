@@ -1190,6 +1190,10 @@ video {
   opacity: 0.75;
 }
 
+img {
+  opacity: .1;
+}
+
 #search-form input:focus + #search-small-icon{
   display: flex;
 }
@@ -1234,6 +1238,22 @@ video {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+#content-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 1.75rem;
+  /* grid-template-rows: 0.2fr 1.5fr 1.2fr 0.8fr; */
+  /* grid-template-areas:
+      "nav nav nav nav"
+      "sidebar main main main"
+      "sidebar content1 content2 content3"
+      "sidebar footer footer footer"; */
+}
+
+.content-column{
+  /* border: 1px solid red; */
 }
 
 #content-container .video,
