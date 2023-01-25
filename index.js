@@ -36,38 +36,38 @@ const Search = {
     //     });
     //     return this;
     // },
-    load(urlQuery) {
+    load(query) {
         const self = this;
-        if (urlQuery) {
-            $(`#search-input`).val(urlQuery);
+        if (query) {
+            $(`#search-input`).val(query);
             Url.clean();
             self.clearContentContainer();
             if (pageNavigator === "Videos"){
                 // self.search( Video API query)
                 console.log('Video API query');
             } else {
-                self.search('Photos', urlQuery);
+                self.search('Photos', query);
             }
         }
         $(document).ready(function () {
             $(`#search-form`).submit(function(e){
                 e.preventDefault(); //Prevent from submitting a form when clicking on a "Submit" button
                 self.clearContentContainer();
-                urlQuery = $(`#search-input`).val()
-                Url.update(`search=${urlQuery}`);
-                console.log(`search form value: ${urlQuery}`);
+                query = $(`#search-input`).val()
+                Url.update(`search=${query}`);
+                console.log(`search form value: ${query}`);
                 if (pageNavigator === "Videos"){
                     console.log('Video API query');
-                    self.search('Videos', urlQuery);
+                    self.search('Videos', query);
                 } else {
                     // self.search(`https://api.pexels.com/v1/search/?page=1&per_page=18&query=${$searchValue}`);
-                    self.search('Photos', urlQuery);
+                    self.search('Photos', query);
                 }
             });
         });
         return this;
     },
-    // loadNextPage(type, urlQuery) {
+    // loadNextPage(type, query) {
     //     // if (Date.now() - lastRun < 1500) {
     //     //     if (message) {
     //     //         console.log("Please wait before running the function again.");
@@ -83,7 +83,7 @@ const Search = {
     //         // Search.getRandomTrending();
     //     } else if (type === 'Photos') {
     //         // Search.load(); 
-    //         // this.search('Photos', urlQuery);
+    //         // this.search('Photos', query);
     //     } else if (type === 'Videos') {
 
     //     } else {
@@ -97,7 +97,7 @@ const Search = {
     //     } else {
     //         this.search('trending');
     //         // this.search(`https://api.pexels.com/v1/curated?page=${page}&per_page=18`, 'trending');
-    //         // self.search(urlQuery, 'trending');
+    //         // self.search(query, 'trending');
     //     }
     // },
     getHeaderPhoto(){
@@ -131,20 +131,21 @@ const Search = {
         if (n >= 1e3) return +(n / 1e3).toFixed(1) + "K";
         return n;
     },
-    search(type, urlQuery){
+    search(type, query){
         console.log(`loading page number: ${page}`);
         let searchURL;
         if (type === 'Photos') {
             console.log('type: ' + type);
-            searchURL = `https://api.pexels.com/v1/search/?page=${page++}&per_page=18&query=${urlQuery}`;
+            searchURL = `https://api.pexels.com/v1/search/?page=${page++}&per_page=18&query=${query}`;
         } else if (type === 'Videos') {
             console.log('type: ' + type);
             // Video query
-            // searchURL = `https://api.pexels.com/v1/search/?page=1&per_page=18&query=${urlQuery}`;
+            searchURL = `https://api.pexels.com/videos/search?page=${page++}&per_page=18&query=${query}`;
         } else if (type === 'trending') {
             if (pageNavigator === "Videos") {
                 console.log('type: ' + type + ' pageNavigator: ' + pageNavigator);
                 // Video query
+                searchURL = `https://api.pexels.com/videos/popular?page=${page++}&per_page=18`;
                 // searchURL = `https://api.pexels.com/v1/curated?page=${page++}&per_page=18`;
             } else {
                 console.log('type: ' + type);
@@ -164,6 +165,7 @@ const Search = {
             headers: {'Authorization': PEXEL_API_KEY},
             success: function(data){
                 // console.log(data);
+                // console.log(JSON.stringify(data));
                 // console.log(data.photos.length);
                 const photos = data.photos
                 photos.forEach(function(photo, index) {
@@ -189,7 +191,7 @@ const Search = {
                             $photo.addClass('observing').css('background-color','blue');
                             
                             //add observer to the last photo in the column
-                            self.observeMediaContainer($photo, type, urlQuery);
+                            self.observeMediaContainer($photo, type, query);
                         }
                         $photo.appendTo($(firstContentColumn));
                     }
@@ -242,44 +244,15 @@ const Search = {
         return $currentPhoto;
     },
     createVideo(video){
-        const $currentVideo = $(`
-                <div class="photo media">
-                    <a target="_blank" href="${photo.src.original}">
-                        <img src="${photo.src.original}" alt="${photo.photographer}" loading="lazy">
-                        <video preload="none" loop="" class="VideoTag_video__i0yT6" playsinline="">
-                            <source src="https://player.vimeo.com/external/528975212.sd.mp4?s=ee194a10a7b57e6d3fc71a65d4ffd611a851cfbe&amp;profile_id=165&amp;oauth2_token_id=57447761" type="video/mp4">
-                        </video>
-                    </a>
-                    <div class="icon favorite">
-                        <svg class="" viewBox="0 0 24 24">
-                            <use xlink:href="lib.svg#favorite-icon"></use>
-                        </svg>
-                    </div>
-                    <div class="icon collection">
-                        <svg viewBox="0 0 24 24">
-                            <use xlink:href="lib.svg#collection-icon"></use>
-                        </svg>
-                    </div>
-                    <div class="author_info-wrap">
-                        <a target="_blank" class="author_name flex items-center" href="${photo.photographer_url}">
-                        <!-- <div class="author_img"></div> -->
-                        ${photo.photographer}</a>
-                    </div>
-                    <a download="" title="Download" href="${photo.src.original}?cs=srgb&amp;dl=pexels-anait-film-12276028.jpg&amp;fm=jpg">
-                        <div class="icon file_download">
-                            <svg viewBox="0 0 24 24">
-                                <use xlink:href="lib.svg#file_download-icon"></use>
-                            </svg>
-                        </div>
-                    </a>
-                </div>
-                `);
+        const $currentVideo = this.createPhoto(video);
+        $currentVideo.children('a').append($(`
+            <video preload="none" loop="" class="VideoTag_video__i0yT6" playsinline="">
+                <source src="https://player.vimeo.com/external/528975212.sd.mp4?s=ee194a10a7b57e6d3fc71a65d4ffd611a851cfbe&amp;profile_id=165&amp;oauth2_token_id=57447761" type="video/mp4">
+            </video>
+        `))
         return $currentPhoto;
     },
-    observeMediaContainer($trigger, type, urlQuery){
-        // const self = this;
-        // var trigger = document.querySelector("#MainContent section:first-child");
-
+    observeMediaContainer($trigger, type, query){
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 // entry.target.classList.toggle('show', entry.isIntersecting);
@@ -287,8 +260,7 @@ const Search = {
                 if (entry.isIntersecting) {
                     if (type === 'trending' || type === 'Photos' || type === 'Videos') {
                         console.log(`${type} +++`);
-                        this.search(type, urlQuery);
-                        // this.loadNextPage(type, urlQuery);
+                        this.search(type, query);
                     } else {
                         console.log('unknown type: ' + type);
                     }
@@ -357,6 +329,9 @@ function Init(){
         $(this).addClass('active');
         pageNavigator = $(this).text();
         console.log(pageNavigator);
+        Url.clean();
+        Search.clearContentContainer();
+        Search.search('trending');
         // const position = $(this).position();
         // const activeWidth = ($(this).width() + 40);
         // $('#selection').css({left: position.left + 'px', width: activeWidth + 'px'});
@@ -374,20 +349,6 @@ function Init(){
         $('#sort-by-btn h2').text(sortBy);
     });
 
-    //looking for scroll-down till the 2/3 of the page and load more photos
-    // $(document).ready(function(){
-    //     $(document).scroll(function(){
-    //         const triggerPosition = ($("#content-container")[0].getBoundingClientRect().height / 3 * 2).toFixed();
-    //         const currentScrollPosition = window.pageYOffset;
-    //         if (currentScrollPosition > triggerPosition) {
-    //             // console.log(`triggerPosition ${triggerPosition}`);
-    //             load()
-    //         } else {
-    //             // console.log(`waiting for scroll down till 2/3 of the current scroll position`);
-    //         }
-    //     });
-    // });
-
     //Video play on hover
     playVideoOnHover();
     
@@ -398,15 +359,8 @@ function Init(){
     if (Url.load()){
         console.log(pageNavigator);
         Search.load(Url.load());
-        // if (pageNavigator === "Videos") {
-        //     console.log('searching videos')
-        // } else {
-        //     console.log('searching photos')
-        //     Search.load(Url.load());
-        // }
     } else {
         Search.search('trending');
-        // Search.getRandomTrending();
     }
     
     //Observe window width and if it less than 900px move photos
