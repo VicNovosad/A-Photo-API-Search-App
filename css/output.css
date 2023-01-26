@@ -1243,7 +1243,7 @@ img {
 #content-container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 1.75rem;
+  grid-gap: 15px;
   /* grid-template-rows: 0.2fr 1.5fr 1.2fr 0.8fr; */
   /* grid-template-areas:
       "nav nav nav nav"
@@ -1252,15 +1252,11 @@ img {
       "sidebar footer footer footer"; */
 }
 
-.content-column{
-  /* border: 1px solid red; */
-}
-
 #content-container .video,
 #content-container .photo{
-  margin-bottom: 1.75rem;
+  margin-bottom: 15px;
   /* width: calc(50% - 15px); */
-  min-height: 150px;
+  /* min-height: 150px; */
   background-color: gray;
   position: relative;
 }
@@ -1294,11 +1290,11 @@ img {
   display: none;
 }
 
-#content-container .video:hover .icon,
+#content-container .video:hover .icon:not(.icon.file_download),
 #content-container .video:hover .author_info-wrap,
-#content-container .photo:hover .icon,
+#content-container .photo:hover .icon:not(.icon.file_download),
 #content-container .photo:hover .author_info-wrap{
-  display: flex;
+  display: none;
 }
 
 #content-container .icon:hover{
@@ -1319,8 +1315,8 @@ img {
 }
 
 #content-container .icon.video-icon{
-  left: 15px;
-  top: 10px;
+  left: 7.5px;
+  top: 5px;
   background-color: unset;
   border-radius: 0%;
   padding: 0;
@@ -1345,8 +1341,14 @@ img {
 }
 
 #content-container .icon.file_download{
-  right: 15px;
-  bottom: 15px;
+  right: 7.5px;
+  bottom: 7.5px;
+  display: flex;
+  background-color: transparent;
+}
+
+#content-container .icon.file_download svg {
+  color: white;
 }
 
 #content-container .author_info-wrap{
@@ -1370,9 +1372,45 @@ img {
 }
 
 @media screen and (min-width: 900px) {
-  /* #content-container .photo{
-        width: calc(100% / 3 - 20px);
-    } */
+  #content-container {
+    grid-gap: 30px;
+  }
+
+  #content-container .video,
+    #content-container .photo{
+    margin-bottom: 30px;
+  }
+
+  #content-container .icon.video-icon{
+    left: 15px;
+    top: 10px;
+  }
+}
+
+@media screen and (min-width: 650px) {
+  #content-container .video:hover .icon:not(.icon.file_download),
+    #content-container .video:hover .author_info-wrap,
+    #content-container .photo:hover .icon:not(.icon.file_download),
+    #content-container .photo:hover .author_info-wrap{
+    display: flex;
+  }
+
+  #content-container .video:hover .icon.file_download,
+    #content-container .photo:hover .icon.file_download{
+    display: flex;
+  }
+
+  #content-container .icon.file_download,
+    #content-container .icon.file_download{
+    display: none;
+    background-color: white;
+  }
+
+  #content-container .icon.file_download svg {
+    color: unset;
+    right: 15px;
+    bottom: 15px;
+  }
 }
 
 .placeholder\:text-xl::-moz-placeholder {
