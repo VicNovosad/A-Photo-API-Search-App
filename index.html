@@ -11,7 +11,7 @@
 </head>
 
 <body class="w-full">
-    <header class="flex flex-col w-full min-h-[500px] py-2 px-6 bg-gray-600 bg-center bg-no-repeat bg-cover">
+    <header class="relative flex flex-col w-full min-h-[500px] py-2 px-6 bg-gray-600 bg-center bg-no-repeat bg-cover">
         <div class="top-menu-container flex justify-between items-center w-full">
             <div id="left-block" class="flex">
                 <a href="#" id="logo" class="logo flex justify-center items-center">
@@ -136,7 +136,7 @@
                     bg-white rounded-lg hover:opacity-75 font-medium text-lg">
                     Join
                 </a>
-                <svg class="flex justify-center items-center w-11 h-11 p-2
+                <svg class="flex justify-center items-center w-11 h-11 p-2 2md:hidden
                     text-white rounded-lg hover:bg-gray-200/25 cursor-pointer" viewBox="0 0 24 24" fill="#666">
                     <use xlink:href="lib.svg#mobile-menu"></use>
                 </svg>
@@ -168,36 +168,36 @@
                     Trending:
                 </span>
                 <ul class="flex items-center w-full whitespace-nowrap">
-                    <li>
-                        <a class="cursor-pointer hover:opacity-50" href="/?search=iceberg">
-                        <span class="trend">iceberg</span></a>
+                    <li class="trend-wrap">
+                        <div class="cursor-pointer hover:opacity-50">
+                        <span class="trend"></span></div>
                         <span>,&nbsp;</span>
                     </li>
-                    <li>
-                        <a class="cursor-pointer hover:opacity-50" href="/?search=sky">
-                        <span class="trend">sky</span></a>
+                    <li class="trend-wrap">
+                        <div class="cursor-pointer hover:opacity-50">
+                        <span class="trend"></span></div>
                         <span>,&nbsp;</span>
                     </li>
-                    <li>
-                        <a class="cursor-pointer hover:opacity-50" href="/?search=dark">
-                        <span class="trend">dark</span></a>
+                    <li class="trend-wrap">
+                        <div class="cursor-pointer hover:opacity-50">
+                        <span class="trend"></span></div>
                         <span>,&nbsp;</span>
                     </li>
-                    <li>
-                        <a class="cursor-pointer hover:opacity-50" href="/?search=nature">
-                        <span class="trend">nature</span></a>
+                    <li class="trend-wrap">
+                        <div class="cursor-pointer hover:opacity-50">
+                        <span class="trend"></span></div>
                         <span>,&nbsp;</span>
                     </li>
-                    <li>
-                        <a class="cursor-pointer hover:opacity-50" href="/?search=flowers">
-                        <span class="trend">flowers</span></a>
+                    <li class="trend-wrap">
+                        <div class="cursor-pointer hover:opacity-50">
+                        <span class="trend"></span></div>
                     </li>
-                    <li>
-                        <a class="hover:opacity-50" href="/popular-searches/">
+                    <li >
+                        <div class="icon hover:opacity-50">
                             <svg class="w-6 text-white ml-3 bg-gray-200/50 rounded-full" viewBox="0 0 24 24">
                                 <use xlink:href="lib.svg#horizontal-dots"></use>
                             </svg>
-                        </a>
+                        </div>
                     </li>
                 </ul>
             </nav>
@@ -206,6 +206,11 @@
             <h1 class="text-white opacity-40 whitespace-nowrap">Photo by&nbsp;</h1>
             <a target="_blank" href="" class="text-white opacity-70"></a>
         </div>
+        <video class="HeroHeader_video__eXgec" autoplay="" loop=""
+            poster="https://www.pexels.com/assets/videos/free-videos-7daa2ef41a140f70c757ce91913a4ecb90570b7d7cd2b401bae868350e02c83a.jpg">
+            <source src="https://static.pexels.com/lib/videos/free-videos.mp4" type="video/mp4">
+            <source src="https://static.pexels.com/lib/videos/free-videos.webm" type="video/webm">
+        </video>
     </header>
 
     <div class="container max-w-[1600px] m-auto flex flex-col w-full pt-8 text-lg font-medium text-gray-700 px-8
