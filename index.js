@@ -16,26 +16,6 @@ const Search = {
     trends : ["mountains", "city", "country", "iceberg", "sky", "flowers","travel","house","business",
                         "winter","water","beach","nature","coffee","dog","texture",
                         "car","technology","landscape","money","office","forest","space","dark"],
-    // content(UrlSearchValue,type) {
-    //     const self = this;
-    //     if (UrlSearchValue) {
-    //         $(`#search-input`).val(UrlSearchValue);
-    //         Url.clean();
-    //         self.clearContentContainer();
-    //         self.search(`https://api.pexels.com/v1/search/?page=1&per_page=18&query=${UrlSearchValue}`);
-    //     }
-    //     $(document).ready(function () {
-    //         $(`#search-form`).submit(function(e){
-    //             console.log('step3');
-    //             e.preventDefault(); //Prevent from submitting a form when clicking on a "Submit" button
-    //             self.clearContentContainer();
-    //             const $searchValue = $(`#search-input`).val()
-    //             Url.update(`search=${$searchValue}`);
-    //             self.search(`https://api.pexels.com/v1/search/?page=1&per_page=18&query=${$searchValue}`);
-    //         });
-    //     });
-    //     return this;
-    // },
     load(query) {
         const self = this;
         if (query) {
@@ -43,12 +23,12 @@ const Search = {
             Url.clean();
             self.clearContentContainer();
             if (pageNavigator === "Videos"){
-                // self.search( Video API query)
-                console.log('Video API query');
+                console.log('Video query');
+                self.search('Videos', query);
             } else {
                 self.search('Photos', query);
             }
-        }
+        } 
         $(document).ready(function () {
             $(`#search-form`).submit(function(e){
                 e.preventDefault(); //Prevent from submitting a form when clicking on a "Submit" button
@@ -57,7 +37,7 @@ const Search = {
                 Url.update(`search=${query}`);
                 console.log(`search form value: ${query}`);
                 if (pageNavigator === "Videos"){
-                    console.log('Video API query');
+                    console.log('Video query');
                     self.search('Videos', query);
                 } else {
                     // self.search(`https://api.pexels.com/v1/search/?page=1&per_page=18&query=${$searchValue}`);
@@ -67,39 +47,6 @@ const Search = {
         });
         return this;
     },
-    // loadNextPage(type, query) {
-    //     // if (Date.now() - lastRun < 1500) {
-    //     //     if (message) {
-    //     //         console.log("Please wait before running the function again.");
-    //     //         message = false;
-    //     //     }
-    //     //     return;
-    //     // }
-    //     // lastRun = Date.now();
-    //     // message = true;
-    //     // console.log(`run loading page number ${page}` );
-        
-    //     if (type == 'trending'){
-    //         // Search.getRandomTrending();
-    //     } else if (type === 'Photos') {
-    //         // Search.load(); 
-    //         // this.search('Photos', query);
-    //     } else if (type === 'Videos') {
-
-    //     } else {
-    //         console.log('Unknown type: ' + type);
-    //     }
-    // },
-    // getRandomTrending(){
-    //     if (pageNavigator === "Videos"){
-    //         // this.search(` Video API query`);
-    //         console.log('Video API query');
-    //     } else {
-    //         this.search('trending');
-    //         // this.search(`https://api.pexels.com/v1/curated?page=${page}&per_page=18`, 'trending');
-    //         // self.search(query, 'trending');
-    //     }
-    // },
     getHeaderPhoto(){
         const self = this;
         const searchURL = `https://api.pexels.com/v1/search/?page=${self.randomNumber(1,3800)}&per_page=1&orientation=landscape&query=${this.trends[this.randomNumber(0,this.trends.length-1)]}`;
@@ -167,33 +114,41 @@ const Search = {
                 // console.log(data);
                 // console.log(JSON.stringify(data));
                 // console.log(data.photos.length);
-                const photos = data.photos
-                photos.forEach(function(photo, index) {
-                    const $photo = self.createPhoto(photo)
-                        .css('background-color', `${photo.avg_color}`);
-                    if (index > (data.photos.length / 3 * 2 - 1).toFixed()) {
+                let media = data.photos;
+                let isForVideo = false;
+                let bgColor = "#eee";
+                if (pageNavigator === "Videos") {
+                    media = data.videos
+                    isForVideo = true;
+                }   
+                media.forEach(function(mediaSrc, index) {
+                    if (pageNavigator !== "Videos") {
+                        bgColor = mediaSrc.avg_color;
+                    }
+                    const $imageBox = self.createImgBox(mediaSrc, isForVideo)
+                        .css('background-color', `${bgColor}`);
+                    if (index > (media.length / 3 * 2 - 1).toFixed()) {
                         if (isMobile) {
-                            if (index > (data.photos.length / 3 * 2.5 - 1).toFixed()) {
-                                $photo.addClass('col-3').appendTo($(secondContentColumn))
+                            if (index > (media.length / 3 * 2.5 - 1).toFixed()) {
+                                $imageBox.addClass('col-3').appendTo($(secondContentColumn))
                                     .css('background-color', `red`);
                             } else {
-                                $photo.addClass('col-3').appendTo($(firstContentColumn))
+                                $imageBox.addClass('col-3').appendTo($(firstContentColumn))
                                     .css('background-color', `red`);
                             }
                         } else {
-                            $photo.addClass('col-3').appendTo($(thirdContentColumn))
+                            $imageBox.addClass('col-3').appendTo($(thirdContentColumn))
                             .css('background-color', `red`);
                         }
-                    } else if (index > (data.photos.length / 3 - 1).toFixed()) {
-                        $photo.appendTo($(secondContentColumn));
+                    } else if (index > (media.length / 3 - 1).toFixed()) {
+                        $imageBox.appendTo($(secondContentColumn));
                     } else {
-                        if (index > (data.photos.length / 3 - 2).toFixed()) {
-                            $photo.addClass('observing').css('background-color','blue');
-                            
+                        if (index > (media.length / 3 - 2).toFixed()) {
+                            $imageBox.addClass('observing').css('background-color','blue');
                             //add observer to the last photo in the column
-                            self.observeMediaContainer($photo, type, query);
+                            self.observeMediaContainer($imageBox, type, query);
                         }
-                        $photo.appendTo($(firstContentColumn));
+                        $imageBox.appendTo($(firstContentColumn));
                     }
                 });
                 pagesLoaded++;
@@ -211,46 +166,65 @@ const Search = {
         }
         return randomIndices;
     },
-    createPhoto(photo){
-        const $currentPhoto = $(`
-                <div class="photo media">
-                    <a target="_blank" href="${photo.src.original}">
-                        <img src="${photo.src.original}" alt="${photo.photographer}" loading="lazy">
-                    </a>
-                    <div class="icon favorite">
-                        <svg class="" viewBox="0 0 24 24">
-                            <use xlink:href="lib.svg#favorite-icon"></use>
-                        </svg>
-                    </div>
-                    <div class="icon collection">
-                        <svg viewBox="0 0 24 24">
-                            <use xlink:href="lib.svg#collection-icon"></use>
-                        </svg>
-                    </div>
-                    <div class="author_info-wrap">
-                        <a target="_blank" class="author_name flex items-center" href="${photo.photographer_url}">
-                        <!-- <div class="author_img"></div> -->
-                        ${photo.photographer}</a>
-                    </div>
-                    <a download="" title="Download" href="${photo.src.original}?cs=srgb&amp;dl=pexels-anait-film-12276028.jpg&amp;fm=jpg">
-                        <div class="icon file_download">
-                            <svg viewBox="0 0 24 24">
-                                <use xlink:href="lib.svg#file_download-icon"></use>
-                            </svg>
-                        </div>
-                    </a>
+    createImgBox(imageSrc, isForVideo){
+        const href = isForVideo ? imageSrc.video_files[0].link : imageSrc.src.original;
+        const photoSrc = isForVideo ? imageSrc.image : imageSrc.src.large;
+        const author = isForVideo ? imageSrc.user.name : imageSrc.photographer;
+        const authorURL = isForVideo ? imageSrc.user.url : imageSrc.photographer_url;
+        const download = isForVideo ? 
+              `https://www.pexels.com/video/${imageSrc.id}/download/`
+            : `${imageSrc.src.original}?cs=srgb&amp;dl=pexels-anait-film-12276028.jpg&amp;fm=jpg`;
+        const mediaClass = isForVideo ? 'video' : 'photo';
+        
+        const $currentImgBox = $(`
+            <div class="${mediaClass} media">
+                <a target="_blank" href="${href}">
+                    <img src="${photoSrc}" alt="${author}" loading="lazy">
+                </a>
+                <div class="icon favorite">
+                    <svg class="" viewBox="0 0 24 24">
+                        <use xlink:href="lib.svg#favorite-icon"></use>
+                    </svg>
                 </div>
-                `);
-        return $currentPhoto;
-    },
-    createVideo(video){
-        const $currentVideo = this.createPhoto(video);
-        $currentVideo.children('a').append($(`
-            <video preload="none" loop="" class="VideoTag_video__i0yT6" playsinline="">
-                <source src="https://player.vimeo.com/external/528975212.sd.mp4?s=ee194a10a7b57e6d3fc71a65d4ffd611a851cfbe&amp;profile_id=165&amp;oauth2_token_id=57447761" type="video/mp4">
-            </video>
-        `))
-        return $currentPhoto;
+                <div class="icon collection">
+                    <svg viewBox="0 0 24 24">
+                        <use xlink:href="lib.svg#collection-icon"></use>
+                    </svg>
+                </div>
+                <div class="author_info-wrap">
+                    <a target="_blank" class="author_name flex items-center" href="${authorURL}">
+                    <!-- <div class="author_img"></div> -->
+                    ${author}</a>
+                </div>
+                <a download="" title="Download" href="${download}">
+                    <div class="icon file_download">
+                        <svg viewBox="0 0 24 24">
+                            <use xlink:href="lib.svg#file_download-icon"></use>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+            `);
+            if (isForVideo) {
+                $currentVideo = $(`<video preload="none" loop="" class="" playsinline="">
+                    <source src="${href}" type="video/mp4">
+                </video>`);
+                $(`<div class="icon video-icon">
+                        <svg class="" viewBox="0 0 28.248 22.598">
+                            <use xlink:href="lib.svg#VideoIcon"></use>
+                        </svg>
+                    </div>`).insertAfter($currentImgBox.children('.icon.favorite'));
+                $currentVideo.appendTo($currentImgBox.children('a')[0]);
+                $currentVideo.hover(function() {
+                        $(this)[0].play();
+                        $(this).closest('.video').children('.video-icon').css('opacity', '0');
+                    }, function() {
+                        $(this)[0].pause();
+                        $(this).closest('.video').children('.video-icon').css('opacity', '100%');
+                    }
+                );
+            }
+        return $currentImgBox;
     },
     observeMediaContainer($trigger, type, query){
         const observer = new IntersectionObserver(entries => {
@@ -269,7 +243,8 @@ const Search = {
             });
         }, 
         {
-            threshold: 1,
+            rootMargin: "50%"
+            // threshold: 1,
         });
         observer.observe($trigger[0]);
     },
@@ -302,16 +277,16 @@ const Url = {
     },
 };
 
-function playVideoOnHover(){
-    $(document).ready(function(){
-        $(".video").hover(function() {
-                $('video', this)[0].play();
-            }, function() {
-                $('video', this)[0].pause();
-            }
-        );
-    });
-};
+// function playVideoOnHover(){
+//     $(document).ready(function(){
+//         $(".video").hover(function() {
+//                 $('video', this)[0].play();
+//             }, function() {
+//                 $('video', this)[0].pause();
+//             }
+//         );
+//     });
+// };
 
 function Init(){
     const self = this;
@@ -331,7 +306,13 @@ function Init(){
         console.log(pageNavigator);
         Url.clean();
         Search.clearContentContainer();
-        Search.search('trending');
+        console.log($(`#search-input`).val());
+        if ($(`#search-input`).val() || Url.load()){
+            Search.load(Url.load());
+        } else {
+            Search.search('trending');
+        }
+
         // const position = $(this).position();
         // const activeWidth = ($(this).width() + 40);
         // $('#selection').css({left: position.left + 'px', width: activeWidth + 'px'});
@@ -350,17 +331,17 @@ function Init(){
     });
 
     //Video play on hover
-    playVideoOnHover();
+    // playVideoOnHover();
     
     //Load random Header Photo
     Search.getHeaderPhoto();
 
     // Check searchURL and load Images 
     if (Url.load()){
-        console.log(pageNavigator);
+        // console.log(pageNavigator);
         Search.load(Url.load());
     } else {
-        Search.search('trending');
+        Search.search('trending');     
     }
     
     //Observe window width and if it less than 900px move photos

@@ -10,3 +10,5 @@ tailwind.config.js
 .vscode
 data.json
 config.js
+photos.json
+videos.json
