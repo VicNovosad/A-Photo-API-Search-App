@@ -47,7 +47,7 @@ const Search = {
                 self.clearContentContainer();
                 query = $(`#search-input`).val()
                 Url.update(`search=${query}`);
-                console.log(`search form value: ${query}`);
+                // console.log(`search form value: ${query}`);
                 if (pageNavigator === "Videos"){
                     // console.log('Video query');
                     self.search('Videos', query);
@@ -68,7 +68,7 @@ const Search = {
             headers: {'Authorization': PEXEL_API_KEY},
             success: function(data){
                 // console.log(JSON.stringify(data));
-                $('header').css('background-image', `url(${data.photos[0].src.original}?auto=compress&cs=tinysrgb&fit=crop&h=500&w=1400&dpr=1)`);
+                $('header').css('background-image', `url(${data.photos[0].src.landscape})`);
                 $('header .author-name-wrap a').text(data.photos[0].photographer);
                 $('header .author-name-wrap a').attr("href", data.photos[0].photographer_url);
             }
@@ -328,10 +328,10 @@ function addPageNavigation(){
         Url.clean();
         Search.clearContentContainer();
         if ($(`#search-input`).val()){
-            console.log('Search Input Value: ' + !!$(`#search-input`).val());
+            // console.log('Search Input Value: ' + !!$(`#search-input`).val());
             Search.load($(`#search-input`).val());
         } else if (Url.load()){
-            console.log('Search Bar Value: ' + !!Url.load());
+            // console.log('Search Bar Value: ' + !!Url.load());
             Search.load(Url.load());
         } else {
             Search.search('trending');
