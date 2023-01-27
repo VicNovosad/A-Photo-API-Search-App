@@ -229,19 +229,11 @@ const Search = {
                 $currentVideo.appendTo($currentImgBox.children('a')[0]);
                 $currentVideo.hover(function() {
                         const video = $(this)[0];
-                        var isPlaying = video.currentTime > 0 && !video.paused && !video.ended 
-                                        && video.readyState > video.HAVE_CURRENT_DATA;
-                        if (!isPlaying) {
-                            $(this)[0].play();
-                        }
+                        videoPlay(video);
                         $(this).closest('.video').children('.video-icon').css('opacity', '0');
                     }, function() {
                         const video = $(this)[0];
-                        var isPlaying = video.currentTime > 0 && !video.paused && !video.ended 
-                                        && video.readyState > video.HAVE_CURRENT_DATA;
-                        if (isPlaying) {
-                            video.pause();
-                        }
+                        videoPause(video);
                         $(this).closest('.video').children('.video-icon').css('opacity', '100%');
                     }
                 );
@@ -299,6 +291,24 @@ const Url = {
     },
 };
 
+function videoPlay(video){
+    var isPlaying = video.currentTime > 0 && !video.paused && !video.ended 
+                    && video.readyState > video.HAVE_CURRENT_DATA;
+    if (!isPlaying) {
+        video.play();
+    }
+    return this;
+}
+
+function videoPause(video){
+    var isPlaying = video.currentTime > 0 && !video.paused && !video.ended 
+        && video.readyState > video.HAVE_CURRENT_DATA;
+    if (isPlaying) {
+        video.pause();
+    }
+    return this;
+}
+
 function setRandomTrendingWords(){
     const randomIndices = Search.getRandomIndexes();
     $(`#trending-bar li.trend-wrap`).each(function(index, element) {
@@ -321,8 +331,12 @@ function addPageNavigation(){
         pageNavigator = $(this).text();
         if (pageNavigator === 'Videos') {
             $('header video').show();
+            const video = $('#HeroHeader_video')[0];
+            videoPlay(video);
         } else {
+            const video = $('#HeroHeader_video')[0];
             $('header video').hide();
+            videoPause(video);
         }
         // console.log(pageNavigator);
         Url.clean();
