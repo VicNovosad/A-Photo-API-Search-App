@@ -296,6 +296,7 @@ function videoPlay(video){
                     && video.readyState > video.HAVE_CURRENT_DATA;
     if (!isPlaying) {
         video.play();
+        video.muted = true;
     }
     return this;
 }
@@ -329,14 +330,13 @@ function addPageNavigation(){
         $(`#pages-nav li`).removeClass('active');
         $(this).addClass('active');
         pageNavigator = $(this).text();
+        const video = $('#HeroHeader_video')[0];
         if (pageNavigator === 'Videos') {
-            $('header video').show();
-            const video = $('#HeroHeader_video')[0];
+            $(video).show();
             videoPlay(video);
         } else {
-            const video = $('#HeroHeader_video')[0];
-            $('header video').hide();
             videoPause(video);
+            $(video).hide();
         }
         // console.log(pageNavigator);
         Url.clean();
